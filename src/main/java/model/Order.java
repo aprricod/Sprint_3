@@ -1,6 +1,6 @@
-package ru.yandex.praktikum.model;
+package model;
 
-public class OrderData {
+public class Order {
     private String firstName;
     private String lastName;
     private String address;
@@ -11,8 +11,12 @@ public class OrderData {
     private String comment;
     private String[] color;
 
-    public OrderData(String firstName, String lastName, String address, String metroStation, String phone, int rentTime,
-                     String deliveryDate, String comment, String[] color) {
+    public Order() {
+    }
+
+    public Order(String firstName, String lastName, String address, String metroStation,
+                 String phone, int rentTime,
+                 String deliveryDate, String comment, String[] color) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

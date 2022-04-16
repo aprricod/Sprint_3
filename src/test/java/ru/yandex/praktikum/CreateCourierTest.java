@@ -28,9 +28,7 @@ public class CreateCourierTest {
     @Description("Basic test for /api/v1/courier. Check creation, status code and answer is true")
     public void createCourierWithFullData() {
         String courierLogin = RandomStringUtils.randomAlphabetic(10);
-        // с помощью библиотеки RandomStringUtils генерируем пароль
         String courierPassword = RandomStringUtils.randomAlphabetic(10);
-        // с помощью библиотеки RandomStringUtils генерируем имя курьера
         String courierFirstName = RandomStringUtils.randomAlphabetic(10);
 
         System.out.println(courierLogin + "," + courierPassword + "," + courierFirstName);
@@ -39,6 +37,7 @@ public class CreateCourierTest {
         response.assertThat()
                 .body("ok", equalTo(true))
                 .and().statusCode(201);
+
     }
 
     @Test
@@ -46,7 +45,6 @@ public class CreateCourierTest {
     public void createCourierWithoutFirstName() {
 
         String courierLogin = RandomStringUtils.randomAlphabetic(10);
-        // с помощью библиотеки RandomStringUtils генерируем пароль
         String courierPassword = RandomStringUtils.randomAlphabetic(10);
 
         ValidatableResponse response = createCourier.postDataWithoutFirstName(courierLogin, courierPassword);
@@ -62,5 +60,6 @@ public class CreateCourierTest {
         response.assertThat()
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"))
                 .and().statusCode(400);
+
     }
 }
