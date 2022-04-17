@@ -1,5 +1,7 @@
 package ru.yandex.praktikum;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import model.Courier;
@@ -10,15 +12,17 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class SimpleCourierLoginTest {
+public class AuthCourierTest {
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
     }
 
-    @Test
     //авторизация с некорректными данными/несуществующий юзер
-    public void courierLoginWithWrongData() {
+    @Test
+    @DisplayName("Auth courier with invalid credentials")
+    @Description("Auth courier with invalid credentials or nonexistent user")
+    public void courierAuthWithWrongData() {
 
         Courier courier = new Courier("anUnknownUserArtem", "1234");
         Response response =
@@ -33,9 +37,11 @@ public class SimpleCourierLoginTest {
                 .and().statusCode(404);
     }
 
-    @Test
     //авторизация без одного поля (без пароля)
-    public void courierLoginWithoutPassword() {
+    @Test
+    @DisplayName("Auth courier without required data")
+    @Description("Unsuccessful auth courier without required password")
+    public void courierAuthWithoutPassword() {
 
         Courier courier = new Courier("testArtemCourier");
         Response response =
@@ -51,9 +57,11 @@ public class SimpleCourierLoginTest {
         System.out.println(response.body().asString());
     }
 
-    @Test
     //проверка успешной авторизации
-    public void createNewCourierThenLoginThenDelete() {
+    @Test
+    @DisplayName("Auth courier with correct data")
+    @Description("Successful auth courier with correct data")
+    public void createNewCourierThenAuthThenDelete() {
 
         Courier courier = new Courier("testArtemCourier", "1234", "artem");
         //создаем курьера
@@ -68,15 +76,15 @@ public class SimpleCourierLoginTest {
                 .and().statusCode(201);
 
         //логинимся курьером
-        Response login =
+        Response auth =
                 given()
                         .header("Content-type", "application/json")
                         .and()
                         .body(courier)
                         .when()
                         .post("/api/v1/courier/login");
-        int courierId = login.then().extract().body().path("id");
-        login.then().assertThat().body("id", notNullValue()).and().statusCode(200);
+        int courierId = auth.then().extract().body().path("id");
+        auth.then().assertThat().body("id", notNullValue()).and().statusCode(200);
 
         //удаляем курьера
         Response delete =

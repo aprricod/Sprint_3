@@ -2,64 +2,72 @@ package ru.yandex.praktikum;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.ValidatableResponse;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.After;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import model.Courier;
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 public class CreateCourierTest {
-
-    CreateCourier createCourier = new CreateCourier();
-
     @Before
     public void setUp() {
+        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
     }
 
-    @After
-    public void cleanUo() {
-    }
-
-
+    //создание курьера с неуникальным логином
     @Test
-    @DisplayName("Courier create with full data test")
-    @Description("Basic test for /api/v1/courier. Check creation, status code and answer is true")
-    public void createCourierWithFullData() {
-        String courierLogin = RandomStringUtils.randomAlphabetic(10);
-        String courierPassword = RandomStringUtils.randomAlphabetic(10);
-        String courierFirstName = RandomStringUtils.randomAlphabetic(10);
+    @DisplayName("Create courier with non-unique login")
+    @Description("Unsuccessful create courier with non-unique login")
+    public void createNewCourier() {
 
-        System.out.println(courierLogin + "," + courierPassword + "," + courierFirstName);
-
-        ValidatableResponse response = createCourier.postFullData(courierLogin, courierPassword, courierFirstName);
-        response.assertThat()
+        //создаем курьера
+        Courier courierFirst = new Courier("testArtemCourier", "1234", "artemFirst");
+        Response response =
+                given()
+                        .header("Content-type", "application/json")
+                        .and()
+                        .body(courierFirst)
+                        .when()
+                        .post("/api/v1/courier");
+        response.then().assertThat()
                 .body("ok", equalTo(true))
                 .and().statusCode(201);
 
-    }
+        //логинимся курьером с целью узнать id
+        Response login =
+                given()
+                        .header("Content-type", "application/json")
+                        .and()
+                        .body(courierFirst)
+                        .when()
+                        .post("/api/v1/courier/login");
+        int courierId = login.then().extract().body().path("id");
+        login.then().assertThat().body("id", notNullValue()).and().statusCode(200);
 
-    @Test
-    @DisplayName("Courier create without first name")
-    public void createCourierWithoutFirstName() {
+        //пытаемся создать курьера с неуникальным логином
+        Courier courierSecond = new Courier("testArtemCourier", "1234", "artemSecond");
+        Response response1 =
+                given()
+                        .header("Content-type", "application/json")
+                        .and()
+                        .body(courierSecond)
+                        .when()
+                        .post("/api/v1/courier");
+        response1.then().assertThat()
+                .body("message", equalTo("Этот логин уже используется. Попробуйте другой."))
+                .and().statusCode(409);
 
-        String courierLogin = RandomStringUtils.randomAlphabetic(10);
-        String courierPassword = RandomStringUtils.randomAlphabetic(10);
-
-        ValidatableResponse response = createCourier.postDataWithoutFirstName(courierLogin, courierPassword);
-        response.assertThat()
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"))
-                .and().statusCode(400);
-    }
-
-    @Test
-    @DisplayName("Courier create with empty data")
-    public void createCourierWithEmptyData() {
-        ValidatableResponse response = createCourier.postEmptyData();
-        response.assertThat()
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"))
-                .and().statusCode(400);
-
+        //удаляем курьера
+        Response delete =
+                given()
+                        .header("Content-type", "application/json")
+                        .when()
+                        .delete("/api/v1/courier/{courierId}", courierId);
+        delete.then().assertThat().body("ok", equalTo(true))
+                .and().statusCode(200);
     }
 }

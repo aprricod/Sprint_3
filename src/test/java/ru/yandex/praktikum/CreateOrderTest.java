@@ -57,7 +57,11 @@ public class CreateOrderTest {
     @Test
     public void orderCanBeCreated() {
         CreateOrder createOrder = new CreateOrder();
-        ValidatableResponse response = createOrder.postOrderData(firstName, lastName, address, metroStation, phone, rentTime, deliveryDate, comment, color);
+        ValidatableResponse response = createOrder.postOrderData(
+                firstName, lastName,
+                address, metroStation,
+                phone, rentTime,
+                deliveryDate, comment, color);
         int trackId = response.extract().path("track");
         response.assertThat().body("track", notNullValue()).and().statusCode(201);
         System.out.println(trackId);
