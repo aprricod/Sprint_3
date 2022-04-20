@@ -11,13 +11,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class UnsuccessfulCreateCourierTest {
 
     CreateCourier createCourier = new CreateCourier();
+    String courierLogin = RandomStringUtils.randomAlphabetic(10);
 
     @Test
     @DisplayName("Courier create without all required data password")
     @Description("Courier create without password and first name")
     public void createCourierWithLoginOnly() {
-
-        String courierLogin = RandomStringUtils.randomAlphabetic(10);
 
         ValidatableResponse response = createCourier.postLoginOnly(courierLogin);
         response.assertThat()

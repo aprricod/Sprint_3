@@ -5,7 +5,6 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import model.Courier;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,9 +12,9 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class AuthCourierTest {
+public class AuthCourierTestOld {
 
-    //    String courierLogin = "testArtemCourier";
+//    String courierLogin = "testArtemCourier";
 //    String courierPassword = "1234";
 //    String courierFirstName = "artemFirst";
 
