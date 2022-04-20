@@ -13,7 +13,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class CreateCourierTest {
+public class CreateCourierTestOld {
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru/";
@@ -36,7 +36,7 @@ public class CreateCourierTest {
     @Test
     @DisplayName("Create courier with non-unique login")
     @Description("Unsuccessful create courier with non-unique login")
-    public void createNewCourier() {
+    public void createNewCourierWithNonUniqueLogin() {
 
         //пытаемся создать курьера с неуникальным логином
         Courier courierSecond = new Courier("testArtemCourier", "1234", "artemSecond");
