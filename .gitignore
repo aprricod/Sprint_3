@@ -2,3 +2,4 @@
 /*.iml
 /target
 /.allure/
+.DS_Store
