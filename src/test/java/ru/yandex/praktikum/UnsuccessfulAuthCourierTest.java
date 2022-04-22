@@ -25,15 +25,4 @@ public class UnsuccessfulAuthCourierTest {
         auth.assertThat().body("message", equalTo("Учетная запись не найдена"))
                 .and().statusCode(404);
     }
-
-    //авторизация без одного поля (без пароля)
-    @Test
-    @DisplayName("Auth courier without required data")
-    @Description("Unsuccessful auth courier without required password")
-    public void courierAuthWithoutPassword() {
-
-        ValidatableResponse auth = authCourier.postLoginOnly(courierLogin);
-        auth.assertThat().body("message", equalTo("Учетная запись не найдена"))
-                .and().statusCode(404);
-    }
 }
